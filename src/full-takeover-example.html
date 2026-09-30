@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Desktop-site override: if the bolu_desktop cookie is set, force a
+   desktop-width viewport before the browser computes layout. */
+(function(){
+  try{
+    if(/(?:^|;\s*)bolu_desktop=1/.test(document.cookie)){
+      var vp = document.querySelector('meta[name="viewport"]');
+      if(vp){ vp.setAttribute('content', 'width=1280'); }
+      document.documentElement.className += ' force-desktop';
+    }
+  }catch(e){}
+})();
+</script>
+<title>Full Takeover Example</title>
+<style>
+  body{ font-family: ui-monospace, SFMono-Regular, monospace; margin: 0; padding: 24px; }
+  header{ display: flex; align-items: center; justify-content: space-between;
+          border-bottom: 1px solid #d9e6de; padding-bottom: 12px; margin-bottom: 24px; }
+  #view-toggle{ background: none; border: 1px solid #d9e6de; border-radius: 999px;
+               padding: 6px 12px; font: inherit; font-size: 10px; letter-spacing: 1.5px;
+               cursor: pointer; color: #3c4a44; }
+  #view-toggle:hover{ border-color: #17bb85; color: #0b8a5e; }
+</style>
+</head>
+<body>
+<header>
+  <span>MY PAGE</span>
+  <button id="view-toggle" type="button">DESKTOP SITE</button>
+</header>
+<main>
+  <p>This page renders its own document and never loads the site theme,
+     so the site-wide toggle snippet never runs here. It carries its own
+     copy of the same logic, wired to the same <code>bolu_desktop</code> cookie.</p>
+</main>
+<script>
+(function(){
+  var vt = document.getElementById('view-toggle');
+  function isDesktop(){ return /(?:^|;\s*)bolu_desktop=1/.test(document.cookie); }
+  vt.textContent = isDesktop() ? 'MOBILE SITE' : 'DESKTOP SITE';
+  vt.addEventListener('click', function(){
+    if(isDesktop()){ document.cookie = 'bolu_desktop=; path=/; max-age=0'; }
+    else { document.cookie = 'bolu_desktop=1; path=/; max-age=2592000'; }
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>
